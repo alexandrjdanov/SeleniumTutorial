@@ -7,7 +7,7 @@ import org.openqa.selenium.support.PageFactory;
 
 public class SearchComponent {
     @FindBy(id = "filter_keyword")
-    private WebElement searchIpnut;
+    private WebElement searchInput;
 
     @FindBy(className = "button-search")
     private WebElement searchButton;
@@ -17,7 +17,7 @@ public class SearchComponent {
     }
 
     public void search(String searchTerm) {
-        searchIpnut.sendKeys(searchTerm);
+        searchInput.sendKeys(searchTerm);
         searchButton.click();
     }
 }

@@ -1,10 +1,11 @@
 package com.selenium.workshop;
 
+import com.selenium.workshop.dto.ProductDto;
 import com.selenium.workshop.pages.CatalogPage;
 import com.selenium.workshop.pages.MainPage;
 import com.selenium.workshop.pages.ProductPage;
+import com.selenium.workshop.steps.*;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
@@ -26,11 +27,23 @@ public class SearchProductTest extends BaseTest{
     private ProductPage productPage;
     private CatalogPage catalogPage;
 
+    private BaseSteps baseSteps;
+    private SearchSteps searchSteps;
+    private CatalogSteps catalogSteps;
+    private ProductDetailsSteps productDetailsSteps;
+    private CheckDetailsSteps checkDetailsSteps;
+
     @Before
     public void setUpPages() {
         mainPage = new MainPage(BaseTest.getDriver());
         catalogPage = new CatalogPage(BaseTest.getDriver());
         productPage = new ProductPage(BaseTest.getDriver());
+
+        baseSteps = new BaseSteps(getDriver());
+        searchSteps = new SearchSteps(getDriver());
+        catalogSteps = new CatalogSteps(getDriver());
+        productDetailsSteps = new ProductDetailsSteps(getDriver());
+        checkDetailsSteps = new CheckDetailsSteps();
     }
 
     @Test
@@ -66,5 +79,27 @@ public class SearchProductTest extends BaseTest{
 
         assertTrue("the name on the product page is different from the name on catalog page", firstProductName.equals(actualProductName));
         assertTrue("the price on the product page is different from the price on catalog page", firstProductPrice == actualProductPrice);
+    }
+
+    @Test
+    public void searchProductTest2() {
+        // prerequisites will navigate to main page
+
+        final String searchTerm = "HF-N94";
+
+        baseSteps.checkMainPageLoaded();
+        searchSteps.searhItem(searchTerm);
+        catalogSteps.checkResultsListIsPresent();
+        catalogSteps.checkTermIsPresentInResults(searchTerm);
+
+        final int productIndex = 0;
+        ProductDto catalogProduct = catalogSteps.getProductDetails(productIndex);
+        catalogSteps.openProduct(productIndex);
+
+        productDetailsSteps.checkProductPageLoaded();
+        ProductDto detailedProduct = productDetailsSteps.getProductDetails();
+
+        checkDetailsSteps.checkProductMatch(catalogProduct, detailedProduct);
+
     }
 }
